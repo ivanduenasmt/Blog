@@ -7,6 +7,7 @@ import com.apiRest.blog.util.AppConstantes;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -19,6 +20,7 @@ public class PublicacionControlador {
     @Autowired
     private PublicacionServicio publicacionServicio;
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PublicacionDto> guardarPublicacion(@Valid @RequestBody PublicacionDto publicacionDto){
         return new ResponseEntity<>(this.publicacionServicio.crearPublicacion(publicacionDto), HttpStatus.CREATED);
@@ -40,11 +42,15 @@ public class PublicacionControlador {
         return new ResponseEntity<>(this.publicacionServicio.obtenerPublicacionPorId(id), HttpStatus.OK);
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PublicacionDto> actualizarPublicacion (@Valid @PathVariable("id") long id,@RequestBody PublicacionDto publicacionDto) {
         return  new ResponseEntity<>(this.publicacionServicio.actualizarPublicacion(publicacionDto, id), HttpStatus.OK);
     }
 
+
+/*Solamente podra ejecutar quien tenga el rol de admin */
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<String> eliminarPublicacion(@PathVariable("id") long id){
         this.publicacionServicio.eliminarPublicacion(id);
